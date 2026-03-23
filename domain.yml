@@ -1,0 +1,35 @@
+version: "3.1"
+
+intents:
+  - cumprimentar
+  - informar_problema
+  - despedir
+  - bot_challenge
+
+entities:
+  - problema
+
+slots:
+  problema:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: problema
+
+responses:
+  # Correção do erro: Cannot Acces Action utter_cumprimentar
+  utter_cumprimentar:
+    - text: "Olá! Eu sou o assistente do Som na Nuvem. Como posso ajudar com sua conta ou planos hoje?"
+
+  utter_despedida:
+    - text: "O Som na Nuvem agradece o contato. Tenha um ótimo dia!"
+
+  utter_iamabot:
+    - text: "Eu sou o assistente virtual do Som na Nuvem, especializado em suporte técnico."
+
+  utter_escaneando:
+    - text: "Entendi. Vou verificar as informações sobre '{problema}' no nosso sistema..."
+
+actions:
+  - action_fornecer_suporte
