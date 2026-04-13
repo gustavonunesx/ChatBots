@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblioteca Comunitária — Chatbot</title>
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f1117;
+      --surface:   #1a1d27;
+      --card:      #22263a;
+      --border:    #2e3350;
+      --accent:    #6c63ff;
+      --accent2:   #a89cff;
+      --bot-msg:   #22263a;
+      --user-msg:  #3d3580;
+      --text:      #e2e4f0;
+      --muted:     #8b8fa8;
+      --green:     #4ade80;
+      --red:       #f87171;
+      --radius:    14px;
+      --shadow:    0 4px 24px rgba(0,0,0,.45);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Shell ── */
+    .shell {
+      width: 100%;
+      max-width: 760px;
+      height: 100dvh;
+      max-height: 820px;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .avatar {
+      width: 44px; height: 44px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .header-info { flex: 1; }
+    .header-info h1 { font-size: 1rem; font-weight: 700; }
+    .header-info p  { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      flex-shrink: 0;
+    }
+    .status-dot.offline { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+    /* ── Messages ── */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+
+    #messages::-webkit-scrollbar { width: 6px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    .row.user { flex-direction: row-reverse; }
+
+    .bubble-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .row.user .bubble-avatar { background: var(--user-msg); }
+
+    .bubble {
+      max-width: 72%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      font-size: .9rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .row.bot  .bubble {
+      background: var(--bot-msg);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .row.user .bubble {
+      background: var(--user-msg);
+      border-bottom-right-radius: 4px;
+      color: #fff;
+    }
+
+    /* links inside bot bubbles */
+    .bubble a {
+      color: var(--accent2);
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .timestamp {
+      font-size: .68rem;
+      color: var(--muted);
+      margin-top: 2px;
+      padding: 0 4px;
+    }
+    .row.user .timestamp { text-align: right; }
+
+    /* ── Typing indicator ── */
+    .typing-row { display: none; }
+    .typing-row.visible { display: flex; }
+
+    .typing-bubble {
+      background: var(--bot-msg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      padding: 12px 16px;
+      display: flex; gap: 5px; align-items: center;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: bounce 1.2s infinite;
+    }
+    .dot:nth-child(2) { animation-delay: .2s; }
+    .dot:nth-child(3) { animation-delay: .4s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30%           { transform: translateY(-6px); }
+    }
+
+    /* ── Suggestions ── */
+    #suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 16px 10px;
+      flex-shrink: 0;
+    }
+
+    .chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--accent2);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: background .18s, border-color .18s;
+      user-select: none;
+    }
+    .chip:hover { background: var(--border); border-color: var(--accent2); }
+
+    /* ── Input bar ── */
+    form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--card);
+      flex-shrink: 0;
+    }
+
+    #input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 10px 18px;
+      color: var(--text);
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s;
+      resize: none;
+      height: 44px;
+      line-height: 24px;
+      overflow: hidden;
+    }
+    #input:focus { border-color: var(--accent); }
+    #input::placeholder { color: var(--muted); }
+
+    button[type="submit"] {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background .18s, transform .12s;
+    }
+    button[type="submit"]:hover  { background: var(--accent2); }
+    button[type="submit"]:active { transform: scale(.92); }
+    button[type="submit"] svg    { fill: #fff; width: 20px; height: 20px; }
+
+    /* ── Error toast ── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #3b1515;
+      border: 1px solid var(--red);
+      color: var(--red);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: .85rem;
+      transition: transform .3s;
+      z-index: 100;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Header -->
+  <header>
+    <div class="avatar">📚</div>
+    <div class="header-info">
+      <h1>Biblioteca Comunitária</h1>
+      <p>Assistente de busca de livros</p>
+    </div>
+    <div id="statusDot" class="status-dot offline" title="Verificando conexão…"></div>
+  </header>
+
+  <!-- Messages -->
+  <div id="messages">
+    <!-- Typing indicator (hidden by default) -->
+    <div class="row bot typing-row" id="typingRow">
+      <div class="bubble-avatar">📚</div>
+      <div class="typing-bubble">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick-reply chips -->
+  <div id="suggestions">
+    <span class="chip" data-msg="Olá">👋 Olá</span>
+    <span class="chip" data-msg="Buscar livro Dom Casmurro">🔍 Dom Casmurro</span>
+    <span class="chip" data-msg="Livros do autor Machado de Assis">✍️ Machado de Assis</span>
+    <span class="chip" data-msg="Livros sobre programação">💻 Programação</span>
+    <span class="chip" data-msg="Livros sobre filosofia">🏛️ Filosofia</span>
+    <span class="chip" data-msg="Tchau">👋 Tchau</span>
+  </div>
+
+  <!-- Input -->
+  <form id="chatForm">
+    <input
+      id="input"
+      type="text"
+      placeholder="Digite sua mensagem…"
+      autocomplete="off"
+      autofocus
+    />
+    <button type="submit" aria-label="Enviar">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </form>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // ── Config ────────────────────────────────────────────────────────────────
+  const RASA_URL  = 'http://localhost:5005/webhooks/rest/webhook';
+  const SENDER_ID = 'user_' + Math.random().toString(36).slice(2, 9);
+
+  // ── DOM refs ──────────────────────────────────────────────────────────────
+  const messagesEl  = document.getElementById('messages');
+  const typingRow   = document.getElementById('typingRow');
+  const form        = document.getElementById('chatForm');
+  const input       = document.getElementById('input');
+  const statusDot   = document.getElementById('statusDot');
+  const toast       = document.getElementById('toast');
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function now() {
+    return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function scrollBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  // Convert plain URLs and *bold* markdown to HTML
+  function formatText(text) {
+    // Escape HTML
+    text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // Bold *text*
+    text = text.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
+    // URLs
+    text = text.replace(/(https?:\/\/[^\s]+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    return text;
+  }
+
+  function appendMessage(role, text) {
+    const row = document.createElement('div');
+    row.className = `row ${role}`;
+
+    const avatarEl = document.createElement('div');
+    avatarEl.className = 'bubble-avatar';
+    avatarEl.textContent = role === 'bot' ? '📚' : '🙂';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.innerHTML = formatText(text);
+
+    const ts = document.createElement('div');
+    ts.className = 'timestamp';
+    ts.textContent = now();
+
+    const wrapper = document.createElement('div');
+    if (role === 'bot') {
+      wrapper.appendChild(avatarEl);
+    }
+    wrapper.style.display = 'flex';
+    wrapper.style.flexDirection = 'column';
+    wrapper.style.alignItems = role === 'user' ? 'flex-end' : 'flex-start';
+    wrapper.appendChild(bubble);
+    wrapper.appendChild(ts);
+
+    row.appendChild(role === 'user' ? wrapper : avatarEl);
+    if (role === 'bot') {
+      row.appendChild(wrapper);
+    } else {
+      row.appendChild(wrapper);
+    }
+
+    // Insert before typing row
+    messagesEl.insertBefore(row, typingRow);
+    scrollBottom();
+  }
+
+  function setTyping(visible) {
+    typingRow.classList.toggle('visible', visible);
+    scrollBottom();
+  }
+
+  function setOnline(online) {
+    statusDot.classList.toggle('offline', !online);
+    statusDot.title = online ? 'Bot online' : 'Bot offline';
+  }
+
+  // ── Send message ──────────────────────────────────────────────────────────
+  async function sendMessage(text) {
+    text = text.trim();
+    if (!text) return;
+
+    appendMessage('user', text);
+    input.value = '';
+    input.style.height = '44px';
+    setTyping(true);
+
+    try {
+      const res = await fetch(RASA_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender: SENDER_ID, message: text }),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const messages = await res.json();
+      setOnline(true);
+      setTyping(false);
+
+      if (!messages.length) {
+        appendMessage('bot', 'Hmm, não sei como responder isso. Tente perguntar sobre um livro, autor ou assunto.');
+        return;
+      }
+
+      // Small delay between multiple bot messages for readability
+      for (let i = 0; i < messages.length; i++) {
+        if (i > 0) await new Promise(r => setTimeout(r, 400));
+        const m = messages[i];
+        if (m.text)  appendMessage('bot', m.text);
+        if (m.image) appendMessage('bot', `[imagem: ${m.image}]`);
+      }
+
+    } catch (err) {
+      setTyping(false);
+      setOnline(false);
+      showToast('Não foi possível conectar ao bot. Verifique se o servidor Rasa está rodando na porta 5005.');
+      console.error(err);
+    }
+  }
+
+  // ── Events ────────────────────────────────────────────────────────────────
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    sendMessage(input.value);
+  });
+
+  // Enter sends, Shift+Enter adds newline (textarea-like)
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(input.value);
+    }
+  });
+
+  // Quick-reply chips
+  document.getElementById('suggestions').addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (chip) sendMessage(chip.dataset.msg);
+  });
+
+  // ── Ping to check if Rasa is up ───────────────────────────────────────────
+  async function pingRasa() {
+    try {
+      const res = await fetch('http://localhost:5005/', { method: 'GET' });
+      setOnline(res.ok || res.status < 500);
+    } catch {
+      setOnline(false);
+    }
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  pingRasa();
+  setInterval(pingRasa, 15000);
+
+  // Greet after a brief delay
+  setTimeout(() => {
+    appendMessage('bot',
+      'Olá! 📚 Bem-vindo à Biblioteca Comunitária!\n' +
+      'Posso buscar livros por título, autor ou assunto.\n\n' +
+      'Exemplos:\n' +
+      '• "Buscar livro Dom Casmurro"\n' +
+      '• "Livros do autor Clarice Lispector"\n' +
+      '• "Livros sobre história"\n\n' +
+      'Como posso te ajudar?'
+    );
+  }, 400);
+</script>
+</body>
+</html>

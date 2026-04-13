@@ -1,0 +1,60 @@
+version: "3.1"
+
+intents:
+  - cumprimentar
+  - despedir
+  - buscar_por_titulo
+  - buscar_por_autor
+  - buscar_por_assunto
+
+entities:
+  - titulo
+  - autor
+  - assunto
+
+slots:
+  titulo:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: titulo
+
+  autor:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: autor
+
+  assunto:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: assunto
+
+responses:
+  utter_cumprimentar:
+    - text: "Olá! 📚 Bem-vindo à Biblioteca Comunitária!\nPosso buscar livros por título, autor ou assunto.\nComo posso te ajudar?\nEx: 'Buscar livro Dom Casmurro' ou 'Livros de Python'"
+
+  utter_despedir:
+    - text: "Foi um prazer te ajudar! Boa leitura! 📖 Até mais!"
+
+  utter_pedir_titulo:
+    - text: "Qual é o título do livro que você procura?"
+
+  utter_pedir_autor:
+    - text: "Qual é o nome do autor que você quer pesquisar?"
+
+  utter_pedir_assunto:
+    - text: "Qual assunto você quer pesquisar? (ex: programação, história, filosofia)"
+
+  utter_fallback:
+    - text: "Não entendi. Tente:\n- 'Buscar livro [título]'\n- 'Livros do autor [nome]'\n- 'Livros sobre [assunto]'"
+
+actions:
+  - action_buscar_titulo
+  - action_buscar_autor
+  - action_buscar_assunto
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

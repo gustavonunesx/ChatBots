@@ -1,0 +1,50 @@
+version: "3.1"
+
+stories:
+  - story: busca por título direto
+    steps:
+      - intent: buscar_por_titulo
+      - action: action_buscar_titulo
+
+  - story: cumprimento e busca por título
+    steps:
+      - intent: cumprimentar
+      - action: utter_cumprimentar
+      - intent: buscar_por_titulo
+      - action: action_buscar_titulo
+
+  - story: busca por autor direto
+    steps:
+      - intent: buscar_por_autor
+      - action: action_buscar_autor
+
+  - story: cumprimento e busca por autor
+    steps:
+      - intent: cumprimentar
+      - action: utter_cumprimentar
+      - intent: buscar_por_autor
+      - action: action_buscar_autor
+
+  - story: busca por assunto direto
+    steps:
+      - intent: buscar_por_assunto
+      - action: action_buscar_assunto
+
+  - story: cumprimento e busca por assunto
+    steps:
+      - intent: cumprimentar
+      - action: utter_cumprimentar
+      - intent: buscar_por_assunto
+      - action: action_buscar_assunto
+
+  - story: despedida
+    steps:
+      - intent: despedir
+      - action: utter_despedir
+
+  - story: busca e despedida
+    steps:
+      - intent: buscar_por_titulo
+      - action: action_buscar_titulo
+      - intent: despedir
+      - action: utter_despedir

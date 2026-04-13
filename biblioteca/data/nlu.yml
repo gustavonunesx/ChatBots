@@ -1,0 +1,71 @@
+version: "3.1"
+
+nlu:
+  - intent: cumprimentar
+    examples: |
+      - oi
+      - olá
+      - bom dia
+      - boa tarde
+      - boa noite
+      - hey
+      - oi, preciso de ajuda
+      - olá, pode me ajudar?
+      - quero buscar um livro
+
+  - intent: despedir
+    examples: |
+      - tchau
+      - até logo
+      - obrigado
+      - obrigada
+      - valeu
+      - até mais
+      - encerrar
+      - pode fechar
+
+  - intent: buscar_por_titulo
+    examples: |
+      - buscar livro [Dom Casmurro](titulo)
+      - procurar o livro [O Alquimista](titulo)
+      - encontrar [Harry Potter](titulo)
+      - quero o livro [1984](titulo)
+      - busca [O Senhor dos Anéis](titulo)
+      - me mostra o livro [Capitães da Areia](titulo)
+      - pesquisar título [A Metamorfose](titulo)
+      - buscar título [Memórias Póstumas de Brás Cubas](titulo)
+      - procura [Crime e Castigo](titulo)
+      - quero encontrar [Grande Sertão Veredas](titulo)
+      - buscar livro
+      - procurar livro por título
+      - encontrar um livro
+
+  - intent: buscar_por_autor
+    examples: |
+      - livros do autor [Machado de Assis](autor)
+      - obras de [Paulo Coelho](autor)
+      - buscar livros de [George Orwell](autor)
+      - quero livros do [J.R.R. Tolkien](autor)
+      - pesquisar autor [Clarice Lispector](autor)
+      - livros escritos por [Dostoiévski](autor)
+      - me mostra obras de [Franz Kafka](autor)
+      - buscar por autor [Jorge Amado](autor)
+      - autoria de [Stephen King](autor)
+      - livros de [Agatha Christie](autor)
+      - buscar por autor
+      - pesquisar autor
+
+  - intent: buscar_por_assunto
+    examples: |
+      - livros sobre [programação](assunto)
+      - quero livros de [filosofia](assunto)
+      - buscar assunto [história](assunto)
+      - me indica livros de [ciência](assunto)
+      - pesquisar [romance](assunto)
+      - livros de [ficção científica](assunto)
+      - quero ler sobre [psicologia](assunto)
+      - livros do tema [aventura](assunto)
+      - buscar sobre [tecnologia](assunto)
+      - livros de [matemática](assunto)
+      - buscar por assunto
+      - pesquisar tema
