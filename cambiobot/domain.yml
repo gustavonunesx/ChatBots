@@ -1,0 +1,60 @@
+version: "3.1"
+
+intents:
+  - cumprimentar
+  - despedir
+  - converter_moeda
+  - listar_moedas
+  - afirmar
+  - negar
+
+entities:
+  - moeda_origem
+  - moeda_destino
+  - valor
+
+slots:
+  moeda_origem:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: moeda_origem
+
+  moeda_destino:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: moeda_destino
+
+  valor:
+    type: float
+    mappings:
+      - type: from_entity
+        entity: valor
+
+responses:
+  utter_cumprimentar:
+    - text: "Olá! Sou o CambioBot 💱 Seu assistente de câmbio em tempo real!\nPosso converter moedas instantaneamente. Como posso te ajudar?\nEx: 'Converta 100 dólares para reais'"
+
+  utter_despedir:
+    - text: "Foi um prazer te ajudar! Até a próxima conversão! 👋"
+
+  utter_pedir_valor:
+    - text: "Qual é o valor que deseja converter?"
+
+  utter_pedir_moeda_origem:
+    - text: "De qual moeda deseja converter? (ex: dólar, euro, real)"
+
+  utter_pedir_moeda_destino:
+    - text: "Para qual moeda deseja converter? (ex: real, dólar, euro)"
+
+  utter_fallback:
+    - text: "Não entendi. Tente algo como: 'Converta 100 dólares para reais' ou 'quanto é 50 euros em dólares?'"
+
+actions:
+  - action_converter_moeda
+  - action_listar_moedas
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

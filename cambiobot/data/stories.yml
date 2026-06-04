@@ -1,0 +1,38 @@
+version: "3.1"
+
+stories:
+  - story: conversão completa direto
+    steps:
+      - intent: converter_moeda
+      - action: action_converter_moeda
+
+  - story: cumprimento e conversão completa
+    steps:
+      - intent: cumprimentar
+      - action: utter_cumprimentar
+      - intent: converter_moeda
+      - action: action_converter_moeda
+
+  - story: listar moedas
+    steps:
+      - intent: listar_moedas
+      - action: action_listar_moedas
+
+  - story: cumprimento e listar moedas
+    steps:
+      - intent: cumprimentar
+      - action: utter_cumprimentar
+      - intent: listar_moedas
+      - action: action_listar_moedas
+
+  - story: despedida
+    steps:
+      - intent: despedir
+      - action: utter_despedir
+
+  - story: conversão e despedida
+    steps:
+      - intent: converter_moeda
+      - action: action_converter_moeda
+      - intent: despedir
+      - action: utter_despedir

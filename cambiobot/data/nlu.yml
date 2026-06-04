@@ -1,0 +1,77 @@
+version: "3.1"
+
+nlu:
+  - intent: cumprimentar
+    examples: |
+      - oi
+      - olá
+      - bom dia
+      - boa tarde
+      - boa noite
+      - hey
+      - oi, preciso de ajuda
+      - olá, pode me ajudar?
+
+  - intent: despedir
+    examples: |
+      - tchau
+      - até logo
+      - obrigado
+      - obrigada
+      - valeu
+      - até mais
+      - encerrar
+      - pode fechar
+
+  - intent: converter_moeda
+    examples: |
+      - Converta [100](valor) [dólares](moeda_origem) para [reais](moeda_destino)
+      - Converter [50](valor) [euros](moeda_origem) em [reais](moeda_destino)
+      - Quanto é [200](valor) [reais](moeda_origem) em [dólares](moeda_destino)?
+      - Quanto dá [300](valor) [dólares](moeda_origem) em [euros](moeda_destino)?
+      - [1000](valor) [reais](moeda_origem) em [dólar](moeda_destino)
+      - Quero converter [500](valor) [libras](moeda_origem) para [reais](moeda_destino)
+      - Me diz quanto é [75](valor) [euros](moeda_origem) em [ienes](moeda_destino)
+      - [10](valor) [dólares](moeda_origem) em [reais](moeda_destino)
+      - converter [250](valor) [pesos](moeda_origem) para [dólares](moeda_destino)
+      - [100](valor) [dólar](moeda_origem) para [real](moeda_destino)
+      - quanto fica [80](valor) [euros](moeda_origem) em [reais](moeda_destino)
+      - me converte [45](valor) [reais](moeda_origem) pra [dólar](moeda_destino)
+      - [500](valor) [dólares americanos](moeda_origem) em [reais brasileiros](moeda_destino)
+      - quero saber [100](valor) [libras esterlinas](moeda_origem) em [euro](moeda_destino)
+      - converta
+      - quero converter
+      - fazer uma conversão
+      - converter moeda
+
+  - intent: listar_moedas
+    examples: |
+      - quais moedas você suporta?
+      - quais moedas estão disponíveis?
+      - que moedas posso usar?
+      - lista de moedas
+      - moedas disponíveis
+      - quais são as moedas suportadas?
+      - me mostra as moedas
+      - quais moedas você conhece?
+
+  - intent: afirmar
+    examples: |
+      - sim
+      - isso
+      - correto
+      - exato
+      - pode ser
+      - com certeza
+      - yes
+      - quero
+
+  - intent: negar
+    examples: |
+      - não
+      - nao
+      - não quero
+      - cancela
+      - errado
+      - incorreto
+      - no

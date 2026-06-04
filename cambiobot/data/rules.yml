@@ -1,0 +1,22 @@
+version: "3.1"
+
+rules:
+  - rule: cumprimentar sempre
+    steps:
+      - intent: cumprimentar
+      - action: utter_cumprimentar
+
+  - rule: despedir sempre
+    steps:
+      - intent: despedir
+      - action: utter_despedir
+
+  - rule: listar moedas sempre
+    steps:
+      - intent: listar_moedas
+      - action: action_listar_moedas
+
+  - rule: fallback
+    steps:
+      - intent: nlu_fallback
+      - action: utter_fallback
